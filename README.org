@@ -1,4 +1,4 @@
-* Pre-IB computer science project
+* Com2.e computer science project
 ** Overview
    - The project allows you to increase your final grade by a maximum
      of 3 grades (maximum level 3 in grading levels below)
@@ -6,22 +6,12 @@
      should not strive for a real-world application.
    - Grading is based on
      - specification
-     - correctness and exception handling
-     - code clarity
-     - resource management.
-   - An example is provided for you below, but your program need not
-     be as complicated. The example below is relatively complicated,
-     because it
-     - is capable of reading input from multiple sources: command
-       line, data file and keyboard (user)
-     - defines a class and uses it to store and analyze data
-     - contains a nested loop (loop within a loop) to process the
-       data
-     - uses ~null~ values for object variables to indicate that an
-       object has been processed already.
+     - correctness
+     - code clarity.
+   - An example is provided for you below.
 
 ** Project deadline
-   The dealine of the project is <2022-02-04 Fri 23:59>.
+   The dealine of the project is <2022-11-20 Sun 23:59>.
 
 ** Project submission
    - Your submission consists of
@@ -29,9 +19,6 @@
         1. your target grade level (1, 2 or 3)
         2. specification
         3. test case with typical input
-        4. explanation of how exceptions and special cases are handled
-           (levels 2 and 3)
-        5. explanation of resource handling (level 3)
      2. one ~.java~-file containing the code
      3. possibly one or more text data files needed for the test case.
    - Submission is made via email by providing either
@@ -67,33 +54,25 @@
      - Identifiers (names of variables, constants and functions) are
        meaningful in the context of the program.
 *** Additional criteria for level 2
-**** Correctness and exception handling
-     - At least one exception is caught and reported correctly.  This
-       is also documented.
+**** Use of data structures
+     - Program uses arrays and/or lists in a meaningful way. That is,
+       it would not be possible to program the functionality without a
+       data structure.
+**** Algorithms
+     - Program includes at least one non-trivial algorithm. This could
+       be searching or sorting or something else.
 **** Code clarity
      - Constants are identified and named.
      - All non-trivial parts of the code are
        commented. \ldquo{}Non-trivial\rdquo is defined by assuming
        that the reader is a fellow student.
 *** Additional criteria for level 3
-**** Correctness and exception handling *or* wow-factor
-     One of the following:
-     - The correct working of the program has been documented in all
-       possible special cases (except for the computer running out of
-       memory). That is, your program will not throw an exception
-       (unless your computer runs out of memory).
-     - Your program does something considerably more complex and/or
-       sophisticated that would be required. (In this case, it is
-       much more difficult to document correct working in all
-       special cases.)
-**** Resource management
-     - At least one resource is closed when no longer needed, even in
-       the case of an exception. This is also documented.
+**** Data structures
+     - Program includes at least one programmer-defined class.
 **** Code clarity
      - The flow of the program is split into meaningful functions
        called by ~main()~.
      - The role of defined functions is explained in comments.
-     - If useful, classes are defined for program-specific data types.
 ** Example project
 *** Documentation
 **** Target assessment level
@@ -101,33 +80,20 @@
 **** Specification
 ***** What does the program do?
       The program
-      1. reads data about persons from a file
-      2. prints all persons in groups with namesakes (same first
-         names) on consecutive lines.
-      The user supplies the name of the input file either as a program
-      argument or, if none is given, from keyboard.
-
+      1. reads data about animals from a file
+      2. allows user to search for an animal based on its species
 ***** Data format
        The input data text file consists of lines, each line
        containing
        #+begin_center
-       =lastname firstname address=
+       =category weight species=
        #+end_center
-       Both ~lastname~ and ~firstname~ are single words, while
-       ~address~ is all the remaining text on the line.
+       =category= is a single word, =weight= is a nonnegative integer,
+       and =species= is the rest of the line.
 **** Correctness and exception handling
 ***** Typical test case
-      File [[file:persons.txt]] contains data from 6 persons with 3 groups
-      of namesakes. The number of persons in these groups is 3
-      (Michael), 2 (Jane) and 1. When the program (file
-      [[file:Main.java]]) is run with
-      #+name: run-application
-      #+begin_src sh :exports both :cache no :results output verbatim
-      java Main.java persons.txt
-      #+end_src
-
-      the output is correct, with each group of namesakes printed on
-      consecutive lines:
+      File [[file:animals.txt]] contains data from 4 animals. The
+      following is a script obtained when running the program
 
       #+RESULTS: run-application
       : Cash Michael Las Vegas, US
@@ -163,150 +129,143 @@
     #+begin_src java :exports code :tangle Main.java
       import java.io.File;
       import java.util.Scanner;
+      import java.util.LinkedList;
 
       public class Main
       {
-        public static void main (String[] args)
+        public static void main (String[] args) throws Exception
         {
-          // maximum number of persons this program can handle
-          final int MAX_NUM_PERSONS = 1000;
+          final String filename = "animals.txt";
 
-          // get name of data file
-          String filename;
-          if (args.length >= 1)
-            filename = args [0];
-          else
-            filename = queryFilename ();
+          // read animals from file
+          Animal[] animals = readAnimals (filename);
 
-          // read persons into an array
-          Person[] persons = new Person [MAX_NUM_PERSONS];
-          int numPersons = readPersons (filename, persons);
+          // sort into increasing lexicographic order according to species
+          sortAnimals (animals);
 
-          // list namesakes
-          printNamesakes (persons, numPersons);
+          // search for animal whose species starts with given key; quit
+          // with input !
+          Scanner scanner = new Scanner (System.in);
+          boolean quit = false;
+          while (!quit)
+          {
+            System.out.print ("Please give search key (! to quit): ");
+            String key = scanner.next ();
+            if (key.equals ("!"))
+              quit = true;
+            else
+            {
+              LinkedList<Animal> animalList = searchAnimal (animals, key);
+              if (!animalList.empty ())
+                for (int i = 0; i < animalList.size (); i++)
+                  System.out.println (animalList.get (i));
+              else
+                System.out.println ("<key not found>");
+            }
+          }
         }
 
-        // query the user for the name of data file; return value is the
-        // name of the file
-        static String queryFilename ()
+        // read animals from given file name, return array of animals
+        static Animal[] readAnimals (String filename) throws Exception
         {
-          String filename;
-          try (Scanner scanner = new Scanner (System.in))
-          {
-            System.out.print ("give data file name: ");
-            filename = scanner.next ();
-          }
-          catch (Exception e)
-          {
-            System.out.println ("unable to read data file name, exception: " + e);
-            filename = "";
-            System.exit (-1);
-          }
-
-          return filename;
-        }
-
-        // read persons from data file with given file name into the
-        // supplied array; return value is the number of persons in the data
-        // file
-        static int readPersons (String filename, Person[] persons)
-        {
-          int numPersons = 0;
-
           // open file and create a scanner for it
-          try (Scanner scanner = new Scanner (new File (filename)))
-          {
-            try
-            {
-              // read while there are lines in the file
-              while (scanner.hasNextLine ())
-              {
-                // report error and exit if program limit exceeded
-                if (numPersons > persons.length)
-                {
-                  System.out.println ("exceeded maximum number of persons " + persons.length);
-                  System.exit (-1);
-                }
+          Scanner scanner = new Scanner (new File (filename));
 
-                // each line has last name, first name, address
-                String lastname = scanner.next ();
-                String firstname = scanner.next ();
-                String address = scanner.nextLine (); // address is the rest of the line
+          // first store animals into list, since we do not know how many
+          // there are
+          LinkedList<Animal> animalList = new LinkedList<> ();
 
-                persons [numPersons] = new Person (lastname, firstname, address);
-                numPersons = numPersons + 1;
-              }
-            }
-            catch (Exception e)
-            {
-              System.out.println ("unable to read person data, exception " + e);
-              System.exit (-1);
-            }
-          }
-          catch (Exception e)
+          // read while there are lines in the file
+          while (scanner.hasNextLine ())
           {
-            System.out.println ("unable to open file " + filename + " for reading, exception : " + e);
-            System.exit (-1);
+            // each line has category, weight, species
+            String category = scanner.next ();
+            int weight = scanner.nextInt ();
+
+            // species is the rest of the line, with possible leading and
+            // trailing whitespace trimmed
+            String species = scanner.nextLine ().trim (); 
+
+            animalList.add (new Animal (species, category, weight));
           }
 
-          return numPersons;
+          // store animals into returned array
+          int numAnimals = animalList.size ();
+          Animal[] animals = new Animal [numAnimals];
+          for (int i = 0; i < numAnimals; i++)
+            animals [i] = animalList.get (i);
+
+          return animals;
         }
 
-        // print the persons as groups of namesakes
-        static void printNamesakes (Person[] persons, int numPersons)
+        // sort animals according to species into increasing lexicographic
+        // order
+        static void sortAnimals (Animal[] animals)
         {
-          // go through the persons
-          for (int personInd = 0; personInd < numPersons; personInd = personInd + 1)
-          {
-            Person person = persons [personInd];
-
-            // if the person has not been printed yet, print the person and
-            // the possible namesakes
-            if (person != null)
-            {
-              System.out.println (person);
-
-              // go through namesake candidates, starting from the next
-              // person
-              for (int candInd = personInd + 1; candInd < numPersons; candInd = candInd + 1)
+          // selection sort according to species name
+          for (int i = 0; i < animals.length - 1; i++)
+            for (int j = i + 1; j < animals.length; j++)
+              if (animals [i].species.compareTo (animals [j].species) > 0)
               {
-                Person candidate = persons [candInd];
-                if (candidate != null && person.isNamesake (candidate))
-                {
-                  System.out.println (candidate);
-                  persons [candInd] = null; // set to null, since the person has been printed
-                }
+                Animal tmp = animals [i];
+                animals [i] = animals [j];
+                animals [j] = tmp;
               }
+        }
+
+        // do a binary search for an animal whose species starts with key
+        static LinkedList<Animal> searchAnimal (Animal[] animals, String key)
+        {
+          int lo = 0, hi = animals.length - 1;
+          int foundInd = -1;
+
+          while (lo <= hi)
+          {
+            int mid = (lo + hi) / 2;
+            Animal a = animals [mid];
+            if (a.species.startsWith (key))
+            {
+              foundInd = mid;;
+              break;
             }
-          } 
+            else if (a.species.compareTo (key) > 0)
+              hi = mid - 1;
+            else
+              lo = mid + 1;
+          }
+
+          LinkedList<Animal> animalList = new LinkedList<> ();
+
+          if (foundInd >= 0)
+            while (foundInd > 0 && animals [foundInd - 1].species.startsWith (key))
+              foundInd--;
+
+          while (foundInd < animals.length && animals [foundInd].startsWith (key))
+          {
+            animalList.add (animals [foundInd]);
+            foundInd++;
+          }
+
+          return animalList;
         }
       }
 
 
-      // class containing information of person and helpful methods
-      class Person
+      class Animal
       {
-        public Person (String lastname, String firstname, String address)
+        public Animal (String species, String category, int weight)
         {
-          this.lastname = lastname;
-          this.firstname = firstname;
-          this.address = address;
-        }
-
-        // method for testing whether another person is a namesake
-        public boolean isNamesake (Person person)
-        {
-          return firstname.equals (person.firstname);
+          this.species = species;
+          this.category = category;
+          this.weight = weight;
         }
 
         public String toString ()
         {
-          // note that address always contains a space at its beginning, so
-          // none needs to be added between firstname and address
-          return lastname + " " + firstname + address;
+          return species + " (" + category + ") " + weight;
         }
 
-        public String firstname, lastname, address; // member variables
+        public String species, category;
+        public int weight;
       }
-
     #+end_src
