@@ -66,18 +66,17 @@
 **** Arrays
      Program uses an array in a meaningful way.
 **** Code clarity
-     All non-trivial parts of the code are
-     commented. \ldquo{}Non-trivial\rdquo is defined by assuming that
-     the reader is a fellow student.
+     - All non-trivial parts of the code are
+       commented. \ldquo{}Non-trivial\rdquo is defined by assuming
+       that the reader is a fellow student.
+     - The flow of the program is split into meaningful functions
+       called by ~main()~.
+     - The role of defined functions is explained in comments.
 *** Additional criteria for level 3
 **** Dynamic data structures
      Program uses a list (or other dynamic data structure).
 **** Classes
      Program includes at least one programmer-defined class.
-**** Code clarity
-     - The flow of the program is split into meaningful functions
-       called by ~main()~.
-     - The role of defined functions is explained in comments.
 ** Example project
 *** Documentation
 **** Target assessment level
