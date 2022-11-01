@@ -86,9 +86,9 @@
 ***** What does the program do?
       The program
       1. reads data about animals from a file
-      2. allows user to search for an animal based on its species; for
-         each given key, the program prints all those animals whose
-         species starts with they key given.
+      2. allows user to search for animals based on its species; for
+         each given key (single word), the program prints all those
+         animals whose species start with the key.
 ***** Data format
 ****** Data file
        The input data text file consists of lines, each line
