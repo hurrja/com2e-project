@@ -9,6 +9,10 @@
      - correctness
      - code clarity.
    - An example is provided for you below.
+     - The example is relatively complicated. For example, it utilizes
+       a combination of binary and linear search to find animals whose
+       species starts with a given key. Because there is so little
+       data, linear search would have been sufficient.
 
 ** Project deadline
    The dealine of the project is <2022-11-20 Sun 23:59>.
@@ -32,8 +36,8 @@
 *** Criteria for level 1
 **** Specification
      - There is a sensible description of what the program does.
-     - The program reads input from the user and/or from a text data
-       file and performs a meaningful operation.
+     - The program reads input from the user and/or from text data
+       file(s) and performs a meaningful operation.
      - Format of input is explained clearly.
      - The input contains multiple items of data (multiple numbers, or
        multiple lines of text, or similar).
@@ -42,7 +46,7 @@
        - Note: There are /many/ ways to do this. Read multiple lines
          from a file. Repeat the same operation multiple times for the
          user. Read multiple lines from user input.
-**** Correctness and exception handling
+**** Correctness
      - The program works correctly in one documented test case with
        typical input.
      - If any text data files are required to test this, they are
@@ -54,20 +58,19 @@
      - Identifiers (names of variables, constants and functions) are
        meaningful in the context of the program.
 *** Additional criteria for level 2
-**** Use of data structures
-     - Program uses arrays and/or lists in a meaningful way. That is,
-       it would not be possible to program the functionality without a
-       data structure.
-**** Algorithms
+**** Non-trivial algorithms
      - Program includes at least one non-trivial algorithm. This could
        be searching or sorting or something else.
+**** Arrays
+     - Program uses an array in a meaningful way.
 **** Code clarity
-     - Constants are identified and named.
      - All non-trivial parts of the code are
        commented. \ldquo{}Non-trivial\rdquo is defined by assuming
        that the reader is a fellow student.
 *** Additional criteria for level 3
-**** Data structures
+**** Dynamic data structures
+     - Program uses a list (or other dynamic data structure).
+**** Classes
      - Program includes at least one programmer-defined class.
 **** Code clarity
      - The flow of the program is split into meaningful functions
@@ -81,50 +84,54 @@
 ***** What does the program do?
       The program
       1. reads data about animals from a file
-      2. allows user to search for an animal based on its species
+      2. allows user to search for an animal based on its species; for
+         each given key, the program prints all those animals whose
+         species starts with they key given.
 ***** Data format
        The input data text file consists of lines, each line
        containing
        #+begin_center
        =category weight species=
        #+end_center
-       =category= is a single word, =weight= is a nonnegative integer,
-       and =species= is the rest of the line.
-**** Correctness and exception handling
+       =category= is a single word, =weight= is an integer, and
+       =species= is the rest of the line.
+**** Correctness
 ***** Typical test case
       File [[file:animals.txt]] contains data from 4 animals. The
       following is a script obtained when running the program
 
-      #+RESULTS: run-application
-      : Cash Michael Las Vegas, US
-      : Knight Michael Moving truck
-      : Burnham Michael The final frontier
-      : McGyver Agnus Phoenix, Foundation
-      : Doe Jane Aberdeen, Scotland
-      : Tarzan Jane Greystoke, UK
-
-***** Exception handling (levels 2 and 3)
-      The following are all the possible exceptions / special cases
-      and the way they are handled.
-      - More than one program argument: only the first one is used as
-        name of data file.
-      - Reading user-supplied data file name fails: exception is
-        caught and printed to user, program exits.
-      - Opening data file for reading fails: exception is caught and
-        printed to user, program exits.
-      - Reading data from data file fails: exception caught and
-        printed, program exits.
-      - Number of persons exceeds program constant: reported to user,
-        program exits.
-
-***** Resource management (level 3)
-      The following resources are opened with ~try~-with-resources
-      -statements and are therefore closed automatically when the
-      program no longer needs them, even in the case of an exception.
-      - ~Scanner~ for system input when reading user-supplied file
-        name.
-      - ~Scanner~ when reading data file.
-
+      #+begin_example
+      Please give search key (! to quit): s
+      salmon (fish) 13
+      sea turtle (reptile) 900
+      Please give search key (! to quit): sea
+      sea turtle (reptile) 900
+      Please give search key (! to quit): seat
+      <key not found>
+      Please give search key (! to quit): a
+      albatross (bird) 7
+      Please give search key (! to quit): b
+      blue whale (mammal) 1600
+      Please give search key (! to quit): x
+      <key not found>
+      Please give search key (! to quit): !
+      #+end_example
+**** Non-trivial algorithms
+***** Selection sort
+      - Data is sorted in lexicographic order according to species
+        name using selection sort.
+***** Searching 
+      - Animals whose species starts with given key are search for
+        using a combination of binary search (for one value) and then
+        a form of linear search to extend to all animals matching the
+        key around the point where the first match was found.
+**** Arrays
+     - Animals are stored into array for sorting and binary search.
+**** Dynamic data structures
+     - Lists are used read an unspecified amount of data from the user.
+     - Lists are also used to return an unspecified number of search results.
+**** Classes
+     - A class is used to store animal data.
 *** Program code (provided here just for ease of reading, would be a separate file in your submission)
     #+begin_src java :exports code :tangle Main.java
       import java.io.File;
@@ -135,15 +142,14 @@
       {
         public static void main (String[] args) throws Exception
         {
-          final String filename = "animals.txt";
-
           // read animals from file
+          final String filename = "animals.txt";
           Animal[] animals = readAnimals (filename);
 
           // sort into increasing lexicographic order according to species
           sortAnimals (animals);
 
-          // search for animal whose species starts with given key; quit
+          // search for animals whose species starts with given key; quit
           // with input !
           Scanner scanner = new Scanner (System.in);
           boolean quit = false;
@@ -155,12 +161,12 @@
               quit = true;
             else
             {
-              LinkedList<Animal> animalList = searchAnimal (animals, key);
-              if (!animalList.isEmpty ())
+              LinkedList<Animal> animalList = searchAnimals (animals, key);
+              if (animalList.isEmpty ())
+                System.out.println ("<key not found>");
+              else
                 for (int i = 0; i < animalList.size (); i++)
                   System.out.println (animalList.get (i));
-              else
-                System.out.println ("<key not found>");
             }
           }
         }
@@ -198,26 +204,33 @@
           return animals;
         }
 
-        // sort animals according to species into increasing lexicographic
-        // order
+        // sort animals according to species into lexicographic order
         static void sortAnimals (Animal[] animals)
         {
           // selection sort according to species name
           for (int i = 0; i < animals.length - 1; i++)
+          {
+            int smallestInd = i;
             for (int j = i + 1; j < animals.length; j++)
-              if (animals [i].species.compareTo (animals [j].species) > 0)
-              {
-                Animal tmp = animals [i];
-                animals [i] = animals [j];
-                animals [j] = tmp;
-              }
+              if (animals [smallestInd].species.compareTo (animals [j].species) > 0)
+                smallestInd = j;
+
+            // swap if smallest found is not at index i
+            if (smallestInd != i)
+            {
+              Animal tmp = animals [i];
+              animals [i] = animals [smallestInd];
+              animals [smallestInd] = tmp;
+            }
+          }
         }
 
-        // do a binary search for an animal whose species starts with key
-        static LinkedList<Animal> searchAnimal (Animal[] animals, String key)
+        // return a list of animals whose species start with key
+        static LinkedList<Animal> searchAnimals (Animal[] animals, String key)
         {
+          // binary search for one animal matching key
           int lo = 0, hi = animals.length - 1;
-          int foundInd = -1;
+          int foundInd = -1; // index of found animal, negative if none found
 
           while (lo <= hi)
           {
@@ -235,12 +248,13 @@
           }
 
           LinkedList<Animal> animalList = new LinkedList<> ();
-
           if (foundInd >= 0)
           {
+            // backtrack to first animal matching key
             while (foundInd > 0 && animals [foundInd - 1].species.startsWith (key))
               foundInd--;
 
+            // add all animals matching key
             while (foundInd < animals.length && animals [foundInd].species.startsWith (key))
             {
               animalList.add (animals [foundInd]);
