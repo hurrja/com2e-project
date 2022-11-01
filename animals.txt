@@ -1,0 +1,4 @@
+mammal 1600 blue whale
+reptile 900 sea turtle
+fish 13 salmon
+bird 7 albatross
