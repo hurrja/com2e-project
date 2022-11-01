@@ -142,7 +142,7 @@
     #+begin_src java :exports code :tangle Main.java
       import java.io.File;
       import java.util.Scanner;
-      import java.util.LinkedList;
+      import java.util.ArrayList;
 
       public class Main
       {
@@ -167,7 +167,7 @@
               quit = true;
             else
             {
-              LinkedList<Animal> animalList = searchAnimals (animals, key);
+              ArrayList<Animal> animalList = searchAnimals (animals, key);
               if (animalList.isEmpty ())
                 System.out.println ("<key not found>");
               else
@@ -185,7 +185,7 @@
 
           // first store animals into list, since we do not know how many
           // there are
-          LinkedList<Animal> animalList = new LinkedList<> ();
+          ArrayList<Animal> animalList = new ArrayList<> ();
 
           // read while there are lines in the file
           while (scanner.hasNextLine ())
@@ -232,7 +232,7 @@
         }
 
         // return a list of animals whose species start with key
-        static LinkedList<Animal> searchAnimals (Animal[] animals, String key)
+        static ArrayList<Animal> searchAnimals (Animal[] animals, String key)
         {
           // binary search for one animal matching key
           int lo = 0, hi = animals.length - 1;
@@ -253,7 +253,7 @@
               lo = mid + 1;
           }
 
-          LinkedList<Animal> animalList = new LinkedList<> ();
+          ArrayList<Animal> animalList = new ArrayList<> ();
           if (foundInd >= 0)
           {
             // backtrack to first animal matching key
