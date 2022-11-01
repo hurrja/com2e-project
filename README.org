@@ -137,7 +137,7 @@
      - Lists are used read an unspecified amount of data from the user.
      - Lists are also used to return an unspecified number of search results.
 **** Classes
-     A class is used to store animal data.
+     A class is used to store the data of each animal.
 *** Program code (provided here just for ease of reading, would be a separate file in your submission)
     #+begin_src java :exports code :tangle Main.java
       import java.io.File;
