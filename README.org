@@ -138,8 +138,8 @@
 **** Arrays
      Animals are stored into array for sorting and binary search.
 **** Dynamic data structures
-     - A list is used read an unspecified amount of data from the
-       user.
+     - A list is used read an unspecified amount of data from the data
+       file.
      - A list is also used to return an unspecified number of search
        results.
 **** Classes
