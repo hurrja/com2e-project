@@ -130,16 +130,18 @@
 ***** Selection sort
       Data is sorted in lexicographic order according to species name
       using selection sort.
-***** Searching 
-      Animals whose species starts with given key are search for using
-      a combination of binary search (for one value) and then a form
-      of linear search to extend to all animals matching the key
+***** Searching
+      Animals whose species starts with given key are searched for
+      using a combination of binary search (for one value) and then a
+      form of linear search to extend to all animals matching the key
       around the point where the first match was found.
 **** Arrays
      Animals are stored into array for sorting and binary search.
 **** Dynamic data structures
-     - Lists are used read an unspecified amount of data from the user.
-     - Lists are also used to return an unspecified number of search results.
+     - A list is used read an unspecified amount of data from the
+       user.
+     - A list is also used to return an unspecified number of search
+       results.
 **** Classes
      A class is used to store the data of each animal.
 *** Program code (provided here just for ease of reading, would be a separate file in your submission)
