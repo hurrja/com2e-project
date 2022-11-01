@@ -25,6 +25,10 @@
         1. your target grade level (1, 2 or 3)
         2. specification
         3. test case with typical input
+        4. description of algorithms (for level 2)
+        5. description of use of arrays (for level 2)
+        6. description of use of dynamic data structures (for level 3)
+        7. description of use of classes (for level 3)
      2. one ~.java~-file containing the code
      3. possibly one or more text data files needed for the test case.
    - Submission is made via email by providing either
