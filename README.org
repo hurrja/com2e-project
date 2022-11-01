@@ -7,7 +7,9 @@
    - Grading is based on
      - specification
      - correctness
-     - code clarity.
+     - code clarity
+     - used data structures
+     - algorithms.
    - An example is provided for you below.
      - The example is relatively complicated. For example, it utilizes
        a combination of binary and linear search to find animals whose
@@ -59,19 +61,19 @@
        meaningful in the context of the program.
 *** Additional criteria for level 2
 **** Non-trivial algorithms
-     - Program includes at least one non-trivial algorithm. This could
-       be searching or sorting or something else.
+     Program includes at least one non-trivial algorithm. This could
+     be searching or sorting or something else.
 **** Arrays
-     - Program uses an array in a meaningful way.
+     Program uses an array in a meaningful way.
 **** Code clarity
-     - All non-trivial parts of the code are
-       commented. \ldquo{}Non-trivial\rdquo is defined by assuming
-       that the reader is a fellow student.
+     All non-trivial parts of the code are
+     commented. \ldquo{}Non-trivial\rdquo is defined by assuming that
+     the reader is a fellow student.
 *** Additional criteria for level 3
 **** Dynamic data structures
-     - Program uses a list (or other dynamic data structure).
+     Program uses a list (or other dynamic data structure).
 **** Classes
-     - Program includes at least one programmer-defined class.
+     Program includes at least one programmer-defined class.
 **** Code clarity
      - The flow of the program is split into meaningful functions
        called by ~main()~.
@@ -88,6 +90,7 @@
          each given key, the program prints all those animals whose
          species starts with they key given.
 ***** Data format
+****** Data file
        The input data text file consists of lines, each line
        containing
        #+begin_center
@@ -95,6 +98,10 @@
        #+end_center
        =category= is a single word, =weight= is an integer, and
        =species= is the rest of the line.
+****** User input
+       User input consists of either =!= (terminates program), or a
+       string =key= which is used to find animals whose species starts
+       with =key=.
 **** Correctness
 ***** Typical test case
       File [[file:animals.txt]] contains data from 4 animals. The
@@ -118,20 +125,20 @@
       #+end_example
 **** Non-trivial algorithms
 ***** Selection sort
-      - Data is sorted in lexicographic order according to species
-        name using selection sort.
+      Data is sorted in lexicographic order according to species name
+      using selection sort.
 ***** Searching 
-      - Animals whose species starts with given key are search for
-        using a combination of binary search (for one value) and then
-        a form of linear search to extend to all animals matching the
-        key around the point where the first match was found.
+      Animals whose species starts with given key are search for using
+      a combination of binary search (for one value) and then a form
+      of linear search to extend to all animals matching the key
+      around the point where the first match was found.
 **** Arrays
      - Animals are stored into array for sorting and binary search.
 **** Dynamic data structures
      - Lists are used read an unspecified amount of data from the user.
      - Lists are also used to return an unspecified number of search results.
 **** Classes
-     - A class is used to store animal data.
+     A class is used to store animal data.
 *** Program code (provided here just for ease of reading, would be a separate file in your submission)
     #+begin_src java :exports code :tangle Main.java
       import java.io.File;
